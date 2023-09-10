@@ -294,7 +294,6 @@ def exibir_questoes(materia):
 
     confirm_button = tk.Button(questoes_frame, text="Confirmar Respostas", command=verificar_respostas)
     confirm_button.pack()
-# Código inicial
 
 janela = tk.Tk()
 janela.title("Plataforma de Atividades Interativas")
@@ -346,6 +345,4 @@ menu.add_command(label="Perfil", command=criar_pagina_perfil)
 
 
 
-
-# Inicializa o programa
 janela.mainloop()
