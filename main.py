@@ -79,7 +79,32 @@ class Tela():
         self.nav_inicio()
         
         self.usuario_logado = ''
-        
+
+    # header
+    def atualiza_header(self, seleceted_header_option):
+
+        def muda_estilo():
+            self.actual_header_option.config(background='')
+            self.actual_header_option = seleceted_header_option
+            seleceted_header_option.config(background=self.bg_atual)
+            self.limpa_tela(self.nav)
+            self.limpa_tela(self.main)
+
+        if seleceted_header_option == self.inicio:
+            muda_estilo()
+            self.nav_inicio()
+        elif seleceted_header_option == self.questoes:
+            muda_estilo()
+            self.nav_questoes()
+        elif seleceted_header_option == self.perfil:
+            if self.usuario_logado:
+                muda_estilo()
+                self.nav_perfil()
+                self.main_perfil()
+            else:
+                self.login()
+
+    # nav
     def nav_inicio(self):
         lbl1 = ttk.Label(self.nav, text='Reduza suas chaces de reprovação.', font=('Times New Roman', 24), style='Label.TLabel')
         lbl1.pack(pady=10)
@@ -95,44 +120,90 @@ class Tela():
     def nav_perfil(self):
         lbl = ttk.Label(self.nav, text='Perfil', style='Label.TLabel', font=('Times New Roman', 18))
         lbl.grid(padx=100, pady=20)
-    
+
+    # main
     def main_perfil(self):
-        lbf = tk.LabelFrame(self.main, text='Informações Cadastrais', font=('Times New Roman', 18))
-        lbf.pack(ipadx=75, pady=15)
+        
+        def valida_senha(entry):
+            senha = entry.get()
+            self.vv1.config(text='✅' if len(senha) >= 8 else '❌')
+            self.vv2.config(text='✅' if len([i for i in range(65, 91) if chr(i) in senha]) > 0 else '❌')
+            self.vv3.config(text='✅' if len([i for i in senha if not i.isalnum()]) > 0 else '❌')
+            self.vv4.config(text='✅' if len([i for i in senha if i.isdigit()]) > 0 else '❌')
+        
+        self.frm_perfil = ttk.Frame(self.main)
+        self.frm_perfil.pack(expand=True, fill='both')
+        
+        self.frm_perfil.grid_columnconfigure(0, weight=1)
+        self.frm_perfil.grid_rowconfigure(0, weight=1)
+        
+        lbf = tk.LabelFrame(self.frm_perfil, text='Informações Cadastrais', font=('Times New Roman', 18))
+        lbf.grid(column=0, row=0, ipadx=20)
+        
+        lbf.grid_columnconfigure(0, weight=1)
+        lbf.grid_rowconfigure(0, weight=1)
+        lbf.grid_rowconfigure(1, weight=1)
+        lbf.grid_rowconfigure(2, weight=1)
+        lbf.grid_rowconfigure(3, weight=1)
+        lbf.grid_rowconfigure(4, weight=1)
         
         frm_nome = tk.Frame(lbf)
-        frm_nome.pack(padx=15, pady=15)
+        frm_nome.grid(row=0, column=0)
         lbl_nome = ttk.Label(frm_nome, text='Nome:', font=('Times New Roman', 14), justify='center')
         lbl_nome.pack()
         ent_nome = ttk.Entry(frm_nome, width=25, font=('Times New Roman', 16), justify='center')
-        ent_nome.pack(pady=10)
+        ent_nome.pack()
+        ent_nome.insert('end', self.usuario_logado[1])
         
-        frm_email = tk.Frame(lbf)
-        frm_email.pack(padx=15, pady=15)
-        lbl_email = ttk.Label(frm_email, text='Email:', font=('Times New Roman', 14))
-        lbl_email.pack()
-        ent_senha = ttk.Entry(frm_email, width=25, font=('Times New Roman', 16), justify='center')
-        ent_senha.pack(pady=10)
+        frm_senha_atual = tk.Frame(lbf)
+        frm_senha_atual.grid(row=1, column=0)
+        lbl_senha_atual = ttk.Label(frm_senha_atual, text='Senha atual:', font=('Times New Roman', 14))
+        lbl_senha_atual.pack()
+        ent_senha_atual = ttk.Entry(frm_senha_atual, width=25, font=('Times New Roman', 16), justify='center', show='*')
+        ent_senha_atual.pack()
+        
+        frm_nova_senha = tk.Frame(lbf)
+        frm_nova_senha.grid(row=2, column=0)
+        lbl_nova_senha = ttk.Label(frm_nova_senha, text='Nova senha:', font=('Times New Roman', 14))
+        lbl_nova_senha.pack()
+        ent_nova_senha = ttk.Entry(frm_nova_senha, width=25, font=('Times New Roman', 16), justify='center', show='*')
+        ent_nova_senha.pack()
+        ent_nova_senha.bind('KeyRelease', lambda event, entry: valida_senha(entry))
+        
+        frm2 = ttk.Frame(lbf)
+        frm2.grid(row=3, column=0)
+        frmv1 = ttk.Label(frm2)
+        frmv1.pack(fill='x', anchor='w')
+        self.vv1 = ttk.Label(frmv1, text='❌')
+        self.vv1.pack(side='left')
+        v1 = ttk.Label(frmv1, text='No mínimo 8 caracteres', font=('Times New Roman', 12))
+        v1.pack(side='left')
+        
+        frmv2 = ttk.Label(frm2)
+        frmv2.pack(fill='x', anchor='w')
+        self.vv2 = ttk.Label(frmv2, text='❌')
+        self.vv2.pack(side='left')
+        v2 = ttk.Label(frmv2, text='Uma letra maiúscula', font=('Times New Roman', 12))
+        v2.pack(side='left')
+        
+        frmv3 = ttk.Label(frm2)
+        frmv3.pack(fill='x', anchor='w')
+        self.vv3 = ttk.Label(frmv3, text='❌')
+        self.vv3.pack(side='left')
+        v3 = ttk.Label(frmv3, text='Um caracter especial', font=('Times New Roman', 12))
+        v3.pack(side='left')
+                
+        frmv4 = ttk.Label(frm2)
+        frmv4.pack(fill='x', anchor='w')
+        self.vv4 = ttk.Label(frmv4, text='❌')
+        self.vv4.pack(side='left')
+        v4 = ttk.Label(frmv4, text='Um número', font=('Times New Roman', 12))
+        v4.pack(side='left')
         
         btn = ttk.Button(lbf, text='Atualizar', style='Button.TButton')
-        btn.pack(pady=15)
+        btn.grid(row=4, column=0)
 
-    def atualiza_header(self, seleceted_header_option):
-        self.actual_header_option.config(background='')
-        self.actual_header_option = seleceted_header_option
-        seleceted_header_option.config(background=self.bg_atual)
-        self.limpa_tela(self.nav)
-        self.limpa_tela(self.main)
-        if seleceted_header_option == self.inicio:
-            self.nav_inicio()
-        elif seleceted_header_option == self.questoes:
-            self.nav_questoes()
-        elif seleceted_header_option == self.perfil:
-            if self.usuario_logado == '':
-                self.login()
-            self.nav_perfil()
-            self.main_perfil()
-        
+    # visual
     def troca_tema(self, e):
         estilo_atual = self.style.theme_use()
         if estilo_atual == 'sandstone':
@@ -156,9 +227,15 @@ class Tela():
             if item == self.nav: pass
             else: item.destroy()
 
+    # cadastro/login
     def cadastro(self):
         
         self.val_nome = False
+        
+        def cadastro_login(e):
+            self.tvl_cadastro.destroy()
+            self.login()
+        
         def focus_in(entry):
             if entry == self.ent_nome:
                 if self.ent_nome.get() == 'nome de usuario':
@@ -175,7 +252,7 @@ class Tela():
                 else:
                     r = bd.listar(f'SELECT * FROM usuario U WHERE U.nome = "{self.ent_nome.get()}";')
                     print(r)
-                    if len(r) >= 1:
+                    if len(r) == 1:
                         if len(frm3.winfo_children()) == 1:
                             self.lbl4 = ttk.Label(frm3, text='Nome de usuário indisponível', font=('Times New Roman', 12))
                             self.lbl4.pack()
@@ -205,25 +282,25 @@ class Tela():
             else:
                 btn_confirmar.config(state='disabled')
 
-        self.tlv_cadastro = tk.Toplevel(self.janela)
-        self.tlv_cadastro.title('Crie sua conta')
-        self.tlv_cadastro.geometry('500x400')
-        self.tlv_cadastro.grab_set()
+        self.tvl_cadastro = tk.Toplevel(self.janela)
+        self.tvl_cadastro.title('Crie sua conta')
+        self.tvl_cadastro.geometry('500x400')
+        self.tvl_cadastro.grab_set()
                 
-        self.tlv_cadastro.grid_columnconfigure(0, weight=1)
-        self.tlv_cadastro.grid_rowconfigure(0, weight=1)
-        self.tlv_cadastro.grid_rowconfigure(1, weight=1)
-        self.tlv_cadastro.grid_rowconfigure(2, weight=1)
-        self.tlv_cadastro.grid_rowconfigure(3, weight=1)
-        self.tlv_cadastro.grid_rowconfigure(4, weight=1)
-        self.tlv_cadastro.grid_rowconfigure(5, weight=1)
+        self.tvl_cadastro.grid_columnconfigure(0, weight=1)
+        self.tvl_cadastro.grid_rowconfigure(0, weight=1)
+        self.tvl_cadastro.grid_rowconfigure(1, weight=1)
+        self.tvl_cadastro.grid_rowconfigure(2, weight=1)
+        self.tvl_cadastro.grid_rowconfigure(3, weight=1)
+        self.tvl_cadastro.grid_rowconfigure(4, weight=1)
+        self.tvl_cadastro.grid_rowconfigure(5, weight=1)
         
         self.imagem = Image.open('logo.png')
         self.logo = ImageTk.PhotoImage(self.imagem)
-        self.logo_label = ttk.Label(self.header, image=self.logo)
+        self.logo_label = ttk.Label(self.tvl_cadastro, image=self.logo)
         self.logo_label.grid(row=0, column=0)
         
-        frm1 = ttk.Frame(self.tlv_cadastro)
+        frm1 = ttk.Frame(self.tvl_cadastro)
         frm1.grid(row=1, column=0)
         
         lbl1 = ttk.Label(frm1, text='Já está cadastrado?', font=('Times New Roman', 16))
@@ -233,10 +310,10 @@ class Tela():
         fonte = font.Font(lbl2, lbl2.cget('font'))
         fonte.configure(underline=True)
         lbl2.configure(font=fonte)
-        lbl2.bind('<Button-1>', self.cadastro_login)
+        lbl2.bind('<Button-1>', cadastro_login)
         lbl2.pack(side='left')
         
-        frm3 = ttk.Frame(self.tlv_cadastro)
+        frm3 = ttk.Frame(self.tvl_cadastro)
         frm3.grid(row=2, column=0)
         self.ent_nome = ttk.Entry(frm3, width=25, font=('Times New Roman', 16), justify='center')
         self.ent_nome.insert('end', 'nome de usuario')
@@ -244,15 +321,14 @@ class Tela():
         self.ent_nome.bind('<FocusIn>', lambda event, entry=self.ent_nome: focus_in(self.ent_nome))
         self.ent_nome.bind('<FocusOut>', lambda event, entry=self.ent_nome: focus_out(self.ent_nome))
         
-        self.ent_senha = ttk.Entry(self.tlv_cadastro, width=25, font=('Times New Roman', 16), justify='center')
+        self.ent_senha = ttk.Entry(self.tvl_cadastro, width=25, font=('Times New Roman', 16), justify='center')
         self.ent_senha.insert('end', 'senha')
         self.ent_senha.grid(row=3, column=0)
         self.ent_senha.bind('<FocusIn>', lambda event, entry=self.ent_senha: focus_in(entry))
         self.ent_senha.bind('<FocusOut>', lambda event, entry=self.ent_senha: focus_out(entry))
         self.ent_senha.bind('<KeyRelease>', lambda event, entry=self.ent_senha: valida_senha(entry))
-        
-        self.style.configure('Frame.TFrame', background=self.bg_atual)
-        frm2 = ttk.Frame(self.tlv_cadastro, style='Frame.TFrame')
+    
+        frm2 = ttk.Frame(self.tvl_cadastro, style='Frame.TFrame')
         frm2.grid(row=4, column=0)
 
         frmv1 = ttk.Label(frm2)
@@ -283,7 +359,7 @@ class Tela():
         v4 = ttk.Label(frmv4, text='Um número', font=('Times New Roman', 12))
         v4.pack(side='left')
         
-        btn_confirmar = ttk.Button(self.tlv_cadastro, text='Confirmar', style='Button.TButton', command=self.confirmar_cadastro, state='disabled')
+        btn_confirmar = ttk.Button(self.tvl_cadastro, text='Confirmar', style='Button.TButton', command=self.confirmar_cadastro, state='disabled')
         btn_confirmar.grid(row=5, column=0)
         btn_confirmar.bind('<Enter>', habilitar_botao)
 
@@ -292,52 +368,14 @@ class Tela():
         senha = self.ent_senha.get()
         sql_inserir = f"INSERT INTO usuario VALUES (NULL, '{nome}', '{senha}');"
         bd.inserir(sql_inserir)
-        messagebox.showinfo('Aviso', 'Usuário cadastrado com sucesso!')
-        self.tlv_cadastro.destroy()
+        messagebox.showinfo('Aviso', 'Usuário cadastrado com sucesso!', parent=self.tvl_cadastro)
+        self.tvl_cadastro.destroy()
     
     def login(self):
-        self.tlv_login = tk.Toplevel(self.janela)
-        self.tlv_login.title('Entre na sua conta')
-        self.tlv_login.geometry('500x400')
-        self.tlv_login.grab_set()
         
-        self.tlv_login.grid_columnconfigure(0, weight=1)
-        self.tlv_login.grid_rowconfigure(0, weight=1)
-        self.tlv_login.grid_rowconfigure(1, weight=1)
-        self.tlv_login.grid_rowconfigure(2, weight=1)
-        self.tlv_login.grid_rowconfigure(3, weight=1)
-        self.tlv_login.grid_rowconfigure(4, weight=1)
-        
-        self.imagem = Image.open('logo.png')
-        self.logo = ImageTk.PhotoImage(self.imagem)
-        self.logo_label = ttk.Label(self.header, image=self.logo)
-        self.logo_label.grid(row=0, column=0)
-        
-        frm1 = ttk.Frame(self.tlv_login)
-        frm1.grid(row=1, column=0)
-        lbl1 = ttk.Label(frm1, text='Não possui uma conta', font=('Times New Roman', 16))
-        lbl1.pack(side='left')
-        lbl2 = ttk.Label(frm1, text='Cadastre-se', foreground='#233dff', cursor='hand2', font=('Times New Roman', 16))
-        lbl2.config(underline=6)
-        fonte = font.Font(lbl2, lbl2.cget('font'))
-        fonte.configure(underline=True)
-        lbl2.configure(font=fonte)
-        lbl2.bind('<Button-1>', self.login_cadastro)
-        lbl2.pack(side='left')
-        
-        self.ent_nome = ttk.Entry(self.tlv_login, width=25, font=('Times New Roman', 16), justify='center')
-        self.ent_nome.insert('end', 'nome de usuario')
-        self.ent_nome.bind('<FocusIn>', lambda event, entry=self.ent_nome: focus_in(self.ent_nome))
-        self.ent_nome.bind('<FocusOut>', lambda event, entry=self.ent_nome: focus_out(self.ent_nome))
-        self.ent_nome.grid(row=2, column=0)
-        self.ent_senha = ttk.Entry(self.tlv_login, width=25, font=('Times New Roman', 16), justify='center')
-        self.ent_senha.insert('end', 'senha')
-        self.ent_senha.grid(row=3, column=0)
-        self.ent_senha.bind('<FocusIn>', lambda event, entry=self.ent_senha: focus_in(entry))
-        self.ent_senha.bind('<FocusOut>', lambda event, entry=self.ent_senha: focus_out(entry))
-        
-        btn_confirmar = ttk.Button(self.tlv_login, text='Confirmar', style='Button.TButton', command=self.confirmar_cadastro)
-        btn_confirmar.grid(row=4, column=0)
+        def login_cadastro(e):
+            self.tvl_login.destroy()
+            self.cadastro()
         
         def focus_in(entry):
             if entry == self.ent_nome:
@@ -356,14 +394,66 @@ class Tela():
                 if self.ent_senha.get() == '':
                     self.ent_senha.insert('end', 'senha')
                     self.ent_senha.configure(show='')
+        
+        self.tvl_login = tk.Toplevel(self.janela)
+        self.tvl_login.title('Entre na sua conta')
+        self.tvl_login.geometry('500x400')
+        self.tvl_login.grab_set()
+        
+        self.tvl_login.grid_columnconfigure(0, weight=1)
+        self.tvl_login.grid_rowconfigure(0, weight=1)
+        self.tvl_login.grid_rowconfigure(1, weight=1)
+        self.tvl_login.grid_rowconfigure(2, weight=1)
+        self.tvl_login.grid_rowconfigure(3, weight=1)
+        self.tvl_login.grid_rowconfigure(4, weight=1)
+        
+        self.imagem = Image.open('logo.png')
+        self.logo = ImageTk.PhotoImage(self.imagem)
+        self.logo_label = ttk.Label(self.tvl_login, image=self.logo)
+        self.logo_label.grid(row=0, column=0)
+        
+        frm1 = ttk.Frame(self.tvl_login)
+        frm1.grid(row=1, column=0)
+        lbl1 = ttk.Label(frm1, text='Não possui uma conta?', font=('Times New Roman', 16))
+        lbl1.pack(side='left')
+        lbl2 = ttk.Label(frm1, text='Cadastre-se', foreground='#233dff', cursor='hand2', font=('Times New Roman', 16))
+        lbl2.config(underline=6)
+        fonte = font.Font(lbl2, lbl2.cget('font'))
+        fonte.configure(underline=True)
+        lbl2.configure(font=fonte)
+        lbl2.bind('<Button-1>', login_cadastro)
+        lbl2.pack(side='left')
+        
+        self.ent_nome = ttk.Entry(self.tvl_login, width=25, font=('Times New Roman', 16), justify='center')
+        self.ent_nome.insert('end', 'nome de usuario')
+        self.ent_nome.bind('<FocusIn>', lambda event, entry=self.ent_nome: focus_in(self.ent_nome))
+        self.ent_nome.bind('<FocusOut>', lambda event, entry=self.ent_nome: focus_out(self.ent_nome))
+        self.ent_nome.grid(row=2, column=0)
+        
+        self.ent_senha = ttk.Entry(self.tvl_login, width=25, font=('Times New Roman', 16), justify='center')
+        self.ent_senha.insert('end', 'senha')
+        self.ent_senha.grid(row=3, column=0)
+        self.ent_senha.bind('<FocusIn>', lambda event, entry=self.ent_senha: focus_in(entry))
+        self.ent_senha.bind('<FocusOut>', lambda event, entry=self.ent_senha: focus_out(entry))
+        
+        btn_confirmar = ttk.Button(self.tvl_login, text='Confirmar', style='Button.TButton', command=self.confirmar_login)
+        btn_confirmar.grid(row=4, column=0)   
 
-    def cadastro_login(self, e):
-        self.tlv_cadastro.destroy()
-        self.login()
-    
-    def login_cadastro(self, e):
-        self.tlv_login.destroy()
-        self.cadastro()
+    def confirmar_login(self):
+        nome = self.ent_nome.get()
+        senha = self.ent_senha.get()
+        r = bd.listar(f'SELECT * FROM usuario U WHERE U.nome = "{nome}" AND U.senha = "{senha}";')
+        if r:
+            self.usuario_logado = r[0]
+            print(self.usuario_logado)
+            messagebox.showinfo('Aviso', 'Usuário logado com sucesso!', parent=self.tvl_login)
+            self.tvl_login.destroy()
+        else:
+            r1 = bd.listar(f'SELECT * FROM usuario U WHERE U.nome = "{nome}";')
+            if r1:
+                messagebox.showerror('Aviso', 'Senha incorreta!', parent=self.tvl_login)
+            else:
+                messagebox.showerror('Aviso', 'Usuário ou senha incorretos!', parent=self.tvl_login)
 
 app = tk.Tk()
 janelaPrincipal = Tela(app)
