@@ -124,6 +124,21 @@ class Tela():
     # main
     def main_perfil(self):
         
+        def atualizar_senha():
+            atual = ent_senha_atual.get()
+            nova = ent_nova_senha.get()
+            novo = ent_nome.get()
+            r = bd.listar(f'SELECT * FROM usuario U WHERE U.id = {self.usuario_logado[0]} AND U.senha = "{atual}";')
+            s = bd.listar(f'SELECT * FROM usuario U WHERE U.id != {self.usuario_logado[0]} AND U.nome = "{novo}";')
+            if r and not s:
+                valida_senha(ent_nova_senha)
+                if self.vv1.cget('text') == self.vv2.cget('text') == self.vv3.cget('text') == self.vv4.cget('text') == '✅':
+                    bd.atualizar(f'UPDATE usuario SET nome = "{novo}", senha = "{nova}";')
+                    messagebox.showinfo('Aviso', 'Dados atualizados com sucesso!', parent=self.janela)
+                    t = bd.listar(f'SELECT * FROM usuario U WHERE id = {self.usuario_logado[0]}')
+                else:
+                    messagebox.showerror('Aviso', 'Senha incorreta!')
+
         def valida_senha(entry):
             senha = entry.get()
             self.vv1.config(text='✅' if len(senha) >= 8 else '❌')
@@ -168,7 +183,7 @@ class Tela():
         lbl_nova_senha.pack()
         ent_nova_senha = ttk.Entry(frm_nova_senha, width=25, font=('Times New Roman', 16), justify='center', show='*')
         ent_nova_senha.pack()
-        ent_nova_senha.bind('KeyRelease', lambda event, entry: valida_senha(entry))
+        ent_nova_senha.bind('<KeyRelease>', lambda event, entry=ent_nova_senha: valida_senha(entry))
         
         frm2 = ttk.Frame(lbf)
         frm2.grid(row=3, column=0)
@@ -200,7 +215,7 @@ class Tela():
         v4 = ttk.Label(frmv4, text='Um número', font=('Times New Roman', 12))
         v4.pack(side='left')
         
-        btn = ttk.Button(lbf, text='Atualizar', style='Button.TButton')
+        btn = ttk.Button(lbf, text='Atualizar', style='Button.TButton', command=atualizar_senha)
         btn.grid(row=4, column=0)
 
     # visual
@@ -251,7 +266,6 @@ class Tela():
                     self.ent_nome.insert('end', 'nome de usuario')
                 else:
                     r = bd.listar(f'SELECT * FROM usuario U WHERE U.nome = "{self.ent_nome.get()}";')
-                    print(r)
                     if len(r) == 1:
                         if len(frm3.winfo_children()) == 1:
                             self.lbl4 = ttk.Label(frm3, text='Nome de usuário indisponível', font=('Times New Roman', 12))
@@ -445,7 +459,6 @@ class Tela():
         r = bd.listar(f'SELECT * FROM usuario U WHERE U.nome = "{nome}" AND U.senha = "{senha}";')
         if r:
             self.usuario_logado = r[0]
-            print(self.usuario_logado)
             messagebox.showinfo('Aviso', 'Usuário logado com sucesso!', parent=self.tvl_login)
             self.tvl_login.destroy()
         else:
