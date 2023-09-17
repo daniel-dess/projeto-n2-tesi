@@ -5,61 +5,47 @@ def conecta():
     try:
         con = sqlite3.connect('banco.db')
         return con
-    except Error:
+    except Error as er:
         print('Erro durante a conexão.')
 
-tabelas = ['''
-CREATE TABLE usuario(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome VARCHAR(100) NOT NULL,
-    email VARCHAR(60) NOT NULL,
-    senha VARCHAR(20) NOT NULL
-);
-''',
-'''
-CREATE TABLE disciplina(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome VARCHAR(100) NOT NULL
-);
-''',
-'''
-CREATE TABLE conteudo(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome VARCHAR(100) NOT NULL,
-    id_disciplina INTEGER NOT NULL,
-    FOREIGN KEY (id_disciplina) REFERENCES disciplina (id)
-);
-''',
-'''
-CREATE TABLE questao(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    conteudo TEXT NOT NULL,
-    tentativas INTEGER,
-    acertos INTEGER,
-    id_autor INTEGER NOT NULL,
-    FOREIGN KEY (id_autor) REFERENCES usuario (id)
-);
-''',
-'''
-CREATE TABLE alternativa(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    conteudo TEXT NOT NULL,
-    valor INTEGER NOT NULL,
-    id_questao INTEGER NOT NULL,
-    FOREIGN KEY (id_questao) REFERENCES questao (id)
-);
-''',
-'''
-CREATE TABLE comentario(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    conteudo TEXT NOT NULL,
-    id_questao INTEGER NOT NULL,
-    id_autor INTEGER NOT NULL,
-    FOREIGN KEY (id_questao) REFERENCES questao (id),
-    FOREIGN KEY (id_autor) REFERENCES autor (id)
-);
-'''
-]
+tabelas = ['''CREATE TABLE IF NOT EXISTS "usuario"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "nome" VARCHAR(100) NOT NULL,
+    "senha" VARCHAR(20) NOT NULL
+);''',
+'''CREATE TABLE IF NOT EXISTS "disciplina"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "nome" VARCHAR(100) NOT NULL
+);''',
+'''CREATE TABLE IF NOT EXISTS "conteudo"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "nome" VARCHAR(100) NOT NULL,
+    "id_disciplina" INTEGER NOT NULL,
+    FOREIGN KEY ("id_disciplina") REFERENCES "disciplina" ("id")
+);''',
+'''CREATE TABLE IF NOT EXISTS "questao"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "conteudo" TEXT NOT NULL,
+    "tentativas" INTEGER,
+    "acertos" INTEGER,
+    "id_autor" INTEGER NOT NULL,
+    FOREIGN KEY ("id_autor") REFERENCES "usuario" ("id")
+);''',
+'''CREATE TABLE IF NOT EXISTS "alternativa"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "conteudo" TEXT NOT NULL,
+    "valor" INTEGER NOT NULL,
+    "id_questao" INTEGER NOT NULL,
+    FOREIGN KEY ("id_questao") REFERENCES "questao" ("id")
+);''',
+'''CREATE TABLE IF NOT EXISTS "comentario"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "conteudo" TEXT NOT NULL,
+    "id_questao" INTEGER NOT NULL,
+    "id_autor" INTEGER NOT NULL,
+    FOREIGN KEY ("id_questao") REFERENCES "questao" ("id"),
+    FOREIGN KEY ("id_autor") REFERENCES "autor" ("id")
+);''']
 
 def criar_tabela(sql):
     con = conecta()
@@ -67,7 +53,6 @@ def criar_tabela(sql):
     try:
         cursor.execute(sql)
         con.commit()
-        print('Tabela criada com sucesso!')
     except:
         print('Tabela não criada!')
     con.close()
@@ -75,8 +60,31 @@ def criar_tabela(sql):
 for tabela in tabelas:
     criar_tabela(tabela)
 
-#inserir(sql_inserir_cliente)
-#atualizar(sql_atualizar)
-#remover(sql_remover)
-#mostrar_tabela(sql_mostra_cliente)
-#listar(sql_mostra_cliente)
+def listar(sql):
+    con = conecta()
+    cursor = con.cursor()
+    cursor.execute(sql)
+    resultado = cursor.fetchall()
+    con.close()
+    return resultado
+
+def inserir(sql):
+    con = conecta()
+    cursor = con.cursor()
+    cursor.execute(sql)
+    con.commit()
+    con.close()
+
+def atualizar(sql):
+    con = conecta()
+    cursor = con.cursor()
+    cursor.execute(sql)
+    con.commit()
+    con.close()
+
+def remover(sql):
+    con = conecta()
+    cursor = con.cursor()
+    cursor.execute(sql)
+    con.commit()
+    con.close()
