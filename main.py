@@ -374,6 +374,7 @@ class Tela():
         self.tvl_cadastro.grid_rowconfigure(4, weight=1)
         self.tvl_cadastro.grid_rowconfigure(5, weight=1)
         self.tvl_cadastro.grid_rowconfigure(6, weight=1)
+        self.tvl_cadastro.grid_rowconfigure(7, weight=1)
         
         self.imagem2 = Image.open('logo.png')
         self.logo = ImageTk.PhotoImage(self.imagem2)
@@ -385,7 +386,7 @@ class Tela():
         lbl_cadastro.grid(row=1, column=0)
          
         frm1 = ttk.Frame(self.tvl_cadastro)
-        frm1.grid(row=4, column=0)
+        frm1.grid(row=5, column=0)
         
         lbl1 = ttk.Label(frm1, text='Já está cadastrado?', font=('Times New Roman', 16))
         lbl1.pack(side='left')
@@ -414,7 +415,21 @@ class Tela():
         self.ent_senha.bind('<KeyRelease>', lambda event, entry=self.ent_senha: valida_senha(entry))
     
         frm2 = ttk.Frame(self.tvl_cadastro, style='Frame.TFrame')
-        frm2.grid(row=5, column=0)
+        frm2.grid(row=6, column=0)
+
+        self.show_password_var = tk.BooleanVar()
+        self.show_password_var.set(False) 
+
+        self.show_password_checkbox = ttk.Checkbutton(self.tvl_cadastro, text='Mostrar Senha', variable=self.show_password_var)
+        self.show_password_checkbox.grid(row=4, column=0)
+        
+        def toggle_password_visibility():
+            if self.show_password_var.get():
+                self.ent_senha.config(show='') 
+            else:
+                self.ent_senha.config(show='*') 
+
+        self.show_password_checkbox.config(command=toggle_password_visibility)
 
         frmv1 = ttk.Label(frm2)
         frmv1.pack(fill='x', anchor='w')
@@ -445,7 +460,7 @@ class Tela():
         v4.pack(side='left')
         
         btn_confirmar = ttk.Button(self.tvl_cadastro, text='Confirmar', style='Button.TButton', command=self.confirmar_cadastro, state='disabled')
-        btn_confirmar.grid(row=6, column=0)
+        btn_confirmar.grid(row=7, column=0)
         btn_confirmar.bind('<Enter>', habilitar_botao)
 
     def confirmar_cadastro(self):
@@ -500,6 +515,7 @@ class Tela():
         self.tvl_login.grid_rowconfigure(3, weight=1)
         self.tvl_login.grid_rowconfigure(4, weight=1)
         self.tvl_login.grid_rowconfigure(5, weight=1)
+        self.tvl_login.grid_rowconfigure(6, weight=1)
         
         self.imagem3 = Image.open('logo.png')
         self.logo = ImageTk.PhotoImage(self.imagem3)
@@ -508,7 +524,7 @@ class Tela():
 
         
         frm1 = ttk.Frame(self.tvl_login)
-        frm1.grid(row=4, column=0)
+        frm1.grid(row=5, column=0)
         lbl1 = ttk.Label(frm1, text='Não possui uma conta?', font=('Times New Roman', 16))
         lbl1.pack(side='left')
         lbl2 = ttk.Label(frm1, text='Cadastre-se', foreground='#233dff', cursor='hand2', font=('Times New Roman', 16))
@@ -533,9 +549,22 @@ class Tela():
         self.ent_senha.grid(row=3, column=0)
         self.ent_senha.bind('<FocusIn>', lambda event, entry=self.ent_senha: focus_in(entry))
         self.ent_senha.bind('<FocusOut>', lambda event, entry=self.ent_senha: focus_out(entry))
-        
         btn_confirmar = ttk.Button(self.tvl_login, text='Confirmar', style='Button.TButton', command=self.confirmar_login)
-        btn_confirmar.grid(row=5, column=0)   
+        btn_confirmar.grid(row=6, column=0)   
+
+        self.show_password_var = tk.BooleanVar()
+        self.show_password_var.set(False) 
+
+        self.show_password_checkbox = ttk.Checkbutton(self.tvl_login, text='Mostrar Senha', variable=self.show_password_var)
+        self.show_password_checkbox.grid(row=4, column=0)
+        
+        def toggle_password_visibility():
+            if self.show_password_var.get():
+                self.ent_senha.config(show='') 
+            else:
+                self.ent_senha.config(show='*')  
+
+        self.show_password_checkbox.config(command=toggle_password_visibility)
 
     def confirmar_login(self):
         nome = self.ent_nome.get()
