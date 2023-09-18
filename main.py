@@ -472,10 +472,9 @@ class Tela():
             messagebox.showinfo('Aviso', 'Usuário cadastrado com sucesso!', parent=self.tvl_cadastro)
             self.tvl_cadastro.destroy()
 
-            # Adiciona o código para fazer o login automaticamente aqui
-            self.usuario_logado = (None, nome, senha)  # Define o usuário logado
-            self.atualiza_header(self.perfil)  # Abre a tela de perfil
-
+            user = bd.listar(f"SELECT * FROM usuario WHERE nome = '{nome}';")
+            self.usuario_logado = user[0]
+            self.atualiza_header(self.perfil)  
         except Exception as e:
             messagebox.showerror('Erro', f'Erro ao cadastrar usuário: {str(e)}', parent=self.tvl_cadastro)
 
