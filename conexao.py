@@ -17,18 +17,14 @@ tabelas = ['''CREATE TABLE IF NOT EXISTS "usuario"(
     "id" INTEGER PRIMARY KEY AUTOINCREMENT,
     "nome" VARCHAR(100) NOT NULL
 );''',
-'''CREATE TABLE IF NOT EXISTS "conteudo"(
-    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
-    "nome" VARCHAR(100) NOT NULL,
-    "id_disciplina" INTEGER NOT NULL,
-    FOREIGN KEY ("id_disciplina") REFERENCES "disciplina" ("id")
-);''',
 '''CREATE TABLE IF NOT EXISTS "questao"(
     "id" INTEGER PRIMARY KEY AUTOINCREMENT,
-    "conteudo" TEXT NOT NULL,
+    "conteudo" TEXT,
     "tentativas" INTEGER,
     "acertos" INTEGER,
+    "dificuldade" INTEGER,
     "id_autor" INTEGER NOT NULL,
+    "data_criacao" TIMESTAMP,
     FOREIGN KEY ("id_autor") REFERENCES "usuario" ("id")
 );''',
 '''CREATE TABLE IF NOT EXISTS "alternativa"(
@@ -45,7 +41,14 @@ tabelas = ['''CREATE TABLE IF NOT EXISTS "usuario"(
     "id_autor" INTEGER NOT NULL,
     FOREIGN KEY ("id_questao") REFERENCES "questao" ("id"),
     FOREIGN KEY ("id_autor") REFERENCES "autor" ("id")
-);''']
+);''',
+'''CREATE TABLE IF NOT EXISTS "simulado"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "questoes" TEXT,
+    "id_usuario" INTEGER NOT NULL,
+    FOREIGN KEY ("id_usuario") REFERENCES "usuario" ("id")
+);'''
+]
 
 def criar_tabela(sql):
     con = conecta()
