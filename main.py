@@ -33,9 +33,9 @@ class Tela():
         self.header.grid_columnconfigure(3, weight=1)
         self.header.grid_columnconfigure(4, weight=1)
         
-        self.imagem = Image.open('logo.png')
-        self.logo = ImageTk.PhotoImage(self.imagem)
-        self.logo_label = ttk.Label(self.header, image=self.logo)
+        self.imagem1 = Image.open('logo.png')
+        self.logo_image = ImageTk.PhotoImage(self.imagem1)
+        self.logo_label = ttk.Label(self.header, image=self.logo_image)
         self.logo_label.grid(row=0, column=0)
         
         self.inicio = ttk.Label(self.header, text='INÍCIO', font=('Times New Roman', 18), padding=(50, 50), cursor='hand2')
@@ -295,8 +295,8 @@ class Tela():
         self.tvl_cadastro.grid_rowconfigure(4, weight=1)
         self.tvl_cadastro.grid_rowconfigure(5, weight=1)
         
-        self.imagem = Image.open('logo.png')
-        self.logo = ImageTk.PhotoImage(self.imagem)
+        self.imagem2 = Image.open('logo.png')
+        self.logo = ImageTk.PhotoImage(self.imagem2)
         self.logo_label = ttk.Label(self.tvl_cadastro, image=self.logo)
         self.logo_label.grid(row=0, column=0)
         
@@ -407,8 +407,8 @@ class Tela():
         self.tvl_login.grid_rowconfigure(3, weight=1)
         self.tvl_login.grid_rowconfigure(4, weight=1)
         
-        self.imagem = Image.open('logo.png')
-        self.logo = ImageTk.PhotoImage(self.imagem)
+        self.imagem3 = Image.open('logo.png')
+        self.logo = ImageTk.PhotoImage(self.imagem3)
         self.logo_label = ttk.Label(self.tvl_login, image=self.logo)
         self.logo_label.grid(row=0, column=0)
         
