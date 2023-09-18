@@ -1,6 +1,7 @@
 import sqlite3
 from sqlite3 import Error
 
+
 def conecta():
     try:
         con = sqlite3.connect('banco.db')
@@ -74,9 +75,13 @@ def listar(sql):
 def inserir(sql):
     con = conecta()
     cursor = con.cursor()
-    cursor.execute(sql)
-    con.commit()
+    try:
+        cursor.execute(sql)
+        con.commit()
+    except Error as e:
+        print(f'Erro durante a inserção: {e}')
     con.close()
+
 
 def atualizar(sql):
     con = conecta()
